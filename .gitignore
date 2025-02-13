@@ -1,0 +1,6 @@
+src/main/resources/dataset/*
+*target/*
+.classpath
+.project
+.settings/*
+.apt*
