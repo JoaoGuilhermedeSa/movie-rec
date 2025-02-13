@@ -15,7 +15,7 @@ public class CollaborativeFilter implements RecomendationFilter {
 				.map(row -> new Rating(row.getAs("userId"), row.getAs("movieId"), row.getAs("rating")));
 
 		MatrixFactorizationModel model = ALS.train(JavaRDD.toRDD(ratings), 10, 10, 0.01);
-
+		
 		return model.recommendProducts(userId, pageSize);
 
 	}

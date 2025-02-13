@@ -18,6 +18,7 @@ public class MovieRecApplication {
 
 	public static void main(String[] args) {
 		SparkSession spark = SparkConfig.getSparkSession();
+		int userId = 2;
 		Dataset<Row> ratingsDataset = RatingsLoader.loadRatings(spark, false);
 		Dataset<Row> movieDataset = MovieLoader.loadMovies(spark);
 		Dataset<Row> credits = CreditsLoader.loadCredits(spark);
@@ -26,18 +27,19 @@ public class MovieRecApplication {
 
 		Dataset<Row> fullMoviesDataset = movieDataset.join(credits, "id").join(keywords, "id").join(links,
 				links.col("movieId").equalTo(movieDataset.col("id")));
-		
+
 		ContentFilter contentfilter = new ContentFilter();
-		Rating[] recs = contentfilter.doFilter(fullMoviesDataset, 2, 20);
+		contentfilter.doFilter(fullMoviesDataset, userId, 20);
+
+		RecomendationFilter filter = new CollaborativeFilter();
+		Rating[] recs = filter.doFilter(ratingsDataset, userId, 20);
+		for (Rating r : recs) {
+			System.out.println("O usuário " + userId + " pode assistir o filme " + r.product());
+		}
 		
-        spark.stop();
+		//TODO ADD PARAMS AND HYBRID FILTER
 
+		spark.stop();
 
-//		RecomendationFilter filter = new CollaborativeFilter();
-//		recs = filter.doFilter(ratingsDataset, 2, 20);
-//		
-//		for (Rating r : recs) {
-//			System.out.println("O usuário pode assistir o filme " + r.product());
-//		}
 	}
 }

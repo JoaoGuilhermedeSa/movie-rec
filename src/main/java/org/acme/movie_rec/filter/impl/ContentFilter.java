@@ -1,7 +1,6 @@
 package org.acme.movie_rec.filter.impl;
 
 import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.lower;
 import static org.apache.spark.sql.functions.concat_ws;
 import static org.apache.spark.sql.functions.expr;
 import static org.apache.spark.sql.functions.udf;
@@ -70,7 +69,7 @@ public class ContentFilter implements RecomendationFilter {
 
 	public static List<Row> recommendMovies(Dataset<Row> rescaledData, String movieTitle, int numRecommendations) {
 		// Filter the movie by name
-		Dataset<Row> targetMovie = rescaledData.filter(lower(col("title")).equalTo(movieTitle.toLowerCase()));
+		Dataset<Row> targetMovie = rescaledData.filter(col("title").equalTo(movieTitle.toLowerCase()));
 
 		if (targetMovie.isEmpty()) {
 			System.out.println("Movie not found!");
